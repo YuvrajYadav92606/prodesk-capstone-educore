@@ -215,12 +215,3 @@ prodesk-capstone-educore/
 ```
 
 ---
-
-## 8. Git Initial Commit Verification
-
-To push this repository to GitHub under the required naming convention:
-```bash
-git remote add origin https://github.com/[YOUR-USERNAME]/prodesk-capstone-educore.git
-git branch -M main
-git push -u origin main
-```
