@@ -5,6 +5,7 @@ import { ProtectedRoute, PublicRoute } from './components/RouteGuards';
 import { Login } from './pages/Login';
 import { Register } from './pages/Register';
 import { Dashboard } from './pages/Dashboard';
+import { PaymentSuccess } from './pages/PaymentSuccess';
 
 function App() {
   return (
@@ -20,6 +21,7 @@ function App() {
           {/* Protected Routes (Requires valid JWT, redirects to /login if null or expired) */}
           <Route element={<ProtectedRoute />}>
             <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/payment/success" element={<PaymentSuccess />} />
           </Route>
 
           {/* Fallback & root routing */}
