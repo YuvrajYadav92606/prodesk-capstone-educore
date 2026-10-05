@@ -49,40 +49,40 @@ export const Register = () => {
         <div className="absolute inset-0 bg-gradient-to-br from-indigo-900/40 via-slate-900 to-indigo-950/80 z-0"></div>
         <div className="relative z-10">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-indigo-600 rounded-xl">
+            <div className="p-2.5 bg-indigo-600 rounded-xl shadow-lg shadow-indigo-600/30">
               <GraduationCap className="w-7 h-7 text-white" />
             </div>
             <span className="text-2xl font-bold tracking-tight">EduCore</span>
           </div>
-          <p className="mt-2 text-indigo-200 text-sm">Enterprise Learning Management Platform</p>
+          <p className="mt-2 text-indigo-200 text-sm">Enterprise Learning & Upskilling Cloud</p>
         </div>
 
         <div className="relative z-10 max-w-md">
           <h2 className="text-3xl font-extrabold tracking-tight text-white mb-4">
-            Join the World's Leading Enterprise Engineering Network.
+            Accelerate Team Mastery with Cloud-Scale Learning.
           </h2>
           <p className="text-slate-300 text-sm leading-relaxed mb-6">
-            Get access to specialized curricula, cloud architecture sandboxes, and production-tested systems engineering modules.
+            Access curated curricula, expert-led technical deep dives, and production-tested systems engineering tracks.
           </p>
 
           <div className="space-y-3">
             <div className="flex items-center gap-3 text-sm text-slate-200">
               <div className="w-2 h-2 rounded-full bg-emerald-400"></div>
-              <span>End-to-end cryptographic JWT authentication</span>
+              <span>SOC2-compliant security and data privacy</span>
             </div>
             <div className="flex items-center gap-3 text-sm text-slate-200">
               <div className="w-2 h-2 rounded-full bg-emerald-400"></div>
-              <span>Role-Based Access Control (Student / Instructor)</span>
+              <span>Role-tailored workspace for Learners & Instructors</span>
             </div>
             <div className="flex items-center gap-3 text-sm text-slate-200">
               <div className="w-2 h-2 rounded-full bg-emerald-400"></div>
-              <span>Automated session interception & state hydration</span>
+              <span>Verified certification and progress tracking</span>
             </div>
           </div>
         </div>
 
         <div className="relative z-10 text-xs text-slate-500">
-          (c) 2026 EduCore Technologies Inc. Walking Skeleton MVP.
+          © 2026 EduCore Technologies Inc. All rights reserved.
         </div>
       </div>
 
@@ -90,9 +90,6 @@ export const Register = () => {
       <div className="flex items-center justify-center p-6 sm:p-12">
         <div className="w-full max-w-md space-y-8 bg-white p-8 sm:p-10 rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100">
           <div className="space-y-2">
-            <div className="inline-block px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-xs font-semibold uppercase tracking-wider">
-              Get Started
-            </div>
             <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
               Create an account
             </h2>
@@ -111,7 +108,7 @@ export const Register = () => {
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">
-                Account Role
+                Account Type
               </label>
               <div className="grid grid-cols-2 gap-3">
                 <button
@@ -123,7 +120,7 @@ export const Register = () => {
                       : 'border-slate-200 text-slate-600 hover:bg-slate-50'
                   }`}
                 >
-                  Student
+                  Learner
                 </button>
                 <button
                   type="button"
@@ -141,7 +138,7 @@ export const Register = () => {
 
             <div>
               <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                Full Legal Name
+                Full Name
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -179,7 +176,7 @@ export const Register = () => {
 
             <div>
               <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-1.5">
-                Password (min. 6 characters)
+                Password
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -190,7 +187,7 @@ export const Register = () => {
                   required
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••••••"
+                  placeholder="Minimum 6 characters"
                   className="w-full pl-10 pr-10 py-2 bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 focus:bg-white focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:border-transparent transition-all"
                 />
                 <button
@@ -214,7 +211,7 @@ export const Register = () => {
                   <span>Creating Account...</span>
                 </>
               ) : (
-                'Create EduCore Account'
+                'Create Account'
               )}
             </button>
           </form>

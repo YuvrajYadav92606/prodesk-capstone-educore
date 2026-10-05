@@ -11,7 +11,11 @@ const CourseSchema = new mongoose.Schema(
     description: {
       type: String,
       required: [true, 'Please provide a course description'],
-      maxlength: [1000, 'Description cannot exceed 1000 characters'],
+      maxlength: [2000, 'Description cannot exceed 2000 characters'],
+    },
+    summary: {
+      type: String,
+      default: '',
     },
     category: {
       type: String,
@@ -30,6 +34,18 @@ const CourseSchema = new mongoose.Schema(
       min: [0, 'Price cannot be negative'],
       default: 49.99,
     },
+    tags: {
+      type: [String],
+      default: [],
+    },
+    learningOutcomes: {
+      type: [String],
+      default: [],
+    },
+    estimatedHours: {
+      type: Number,
+      default: 10,
+    },
     instructor: {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'User',
@@ -46,8 +62,10 @@ const CourseSchema = new mongoose.Schema(
   }
 );
 
-// Indexes for fast querying
+// Indexes for high performance searching and filtering
 CourseSchema.index({ instructor: 1, createdAt: -1 });
+CourseSchema.index({ category: 1, level: 1 });
+CourseSchema.index({ tags: 1 });
 
 const Course = mongoose.model('Course', CourseSchema);
 

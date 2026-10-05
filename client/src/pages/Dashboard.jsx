@@ -14,7 +14,10 @@ import {
   AlertCircle,
   CheckCircle,
   ExternalLink,
-  ShieldAlert,
+  Sparkles,
+  Clock,
+  Layers,
+  ChevronRight,
 } from 'lucide-react';
 
 export const Dashboard = () => {
@@ -38,7 +41,7 @@ export const Dashboard = () => {
         setCourses(res.data.data);
       }
     } catch (err) {
-      setErrorBanner('Failed to load courses from API');
+      setErrorBanner('Failed to load courses from server');
     } finally {
       setLoadingCourses(false);
     }
@@ -48,13 +51,11 @@ export const Dashboard = () => {
     fetchCourses();
   }, []);
 
-  // Phase 1 & 2: Create / Update Course Mutation
   const handleModalSubmit = async (formData) => {
     setIsSubmitting(true);
     setErrorBanner('');
     try {
       if (editingCourse) {
-        // PUT /api/courses/:id (Protected with Data Ownership validation)
         const res = await api.put(`/courses/${editingCourse._id}`, formData);
         if (res.data.success) {
           setCourses((prev) =>
@@ -63,7 +64,6 @@ export const Dashboard = () => {
           setSuccessBanner('Course updated successfully');
         }
       } else {
-        // POST /api/courses (Binds instructor to decoded JWT user)
         const res = await api.post('/courses', formData);
         if (res.data.success) {
           setCourses((prev) => [res.data.data, ...prev]);
@@ -74,49 +74,39 @@ export const Dashboard = () => {
       setEditingCourse(null);
     } catch (err) {
       setErrorBanner(
-        err.response?.data?.message || 'Action failed. Ownership permission denied.'
+        err.response?.data?.message || 'Action failed. Please check permissions.'
       );
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  // Phase 2: OPTIMISTIC UI DELETION
-  // Instantly filter out of the DOM, then invoke API. Rollback if server rejects (403 Forbidden).
   const handleDeleteCourse = async (courseId, courseTitle) => {
     const previousCourses = [...courses];
-
-    // Optimistically update the state setter immediately
     setCourses((prev) => prev.filter((c) => c._id !== courseId));
-    setSuccessBanner(`Optimistically removed "${courseTitle}" from DOM...`);
 
     try {
-      // Async API call in the background
       await api.delete(`/courses/${courseId}`);
-      setSuccessBanner(`Successfully confirmed deletion of "${courseTitle}".`);
+      setSuccessBanner(`Course "${courseTitle}" removed.`);
     } catch (err) {
-      // Rollback on rejection (e.g. 403 Forbidden / Not Owner)
-      console.error('Delete rejected by server:', err);
       setCourses(previousCourses);
       setErrorBanner(
         err.response?.data?.message ||
-          'Ownership Security: You can only delete courses that you authored.'
+          'Only the course author or administrator can delete this course.'
       );
     }
   };
 
-  // Phase 3: Stripe Checkout Trigger
   const handleBuyCourse = async (courseId) => {
     setCheckoutLoading(courseId);
     setErrorBanner('');
     try {
       const res = await api.post('/payment/create-checkout-session', { courseId });
       if (res.data.success && res.data.checkoutUrl) {
-        // Redirect to Stripe Checkout
         window.location.href = res.data.checkoutUrl;
       }
     } catch (err) {
-      setErrorBanner(err.response?.data?.message || 'Failed to initiate Stripe Checkout session');
+      setErrorBanner(err.response?.data?.message || 'Unable to initialize checkout.');
       setCheckoutLoading(null);
     }
   };
@@ -125,17 +115,17 @@ export const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
-      {/* Header */}
-      <header className="bg-white border-b border-slate-200 sticky top-0 z-30">
+      {/* SaaS App Header */}
+      <header className="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-indigo-600 rounded-lg">
+            <div className="p-2 bg-indigo-600 rounded-lg shadow-sm">
               <GraduationCap className="w-5 h-5 text-white" />
             </div>
             <div>
-              <span className="font-bold text-slate-900 tracking-tight">EduCore</span>
-              <span className="ml-2 px-2 py-0.5 text-[10px] font-semibold bg-indigo-50 text-indigo-700 rounded-full border border-indigo-100">
-                Track B: CRUD & Gateway
+              <span className="font-bold text-slate-900 tracking-tight text-lg">EduCore</span>
+              <span className="hidden sm:inline-block ml-3 px-2.5 py-0.5 text-xs font-medium bg-slate-100 text-slate-600 rounded-full">
+                Workspace
               </span>
             </div>
           </div>
@@ -143,7 +133,7 @@ export const Dashboard = () => {
           <div className="flex items-center gap-4">
             <div className="text-right hidden sm:block">
               <div className="text-sm font-semibold text-slate-900">{user?.name}</div>
-              <div className="text-xs text-slate-500 capitalize">{user?.role} Portal</div>
+              <div className="text-xs text-slate-500 capitalize">{user?.role}</div>
             </div>
             <button
               onClick={logoutUser}
@@ -156,13 +146,13 @@ export const Dashboard = () => {
         </div>
       </header>
 
-      {/* Main Body */}
+      {/* Main SaaS App Container */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-6">
-        {/* Alerts */}
+        {/* Dynamic Alerts */}
         {errorBanner && (
           <div className="flex items-center justify-between p-4 bg-red-50 border border-red-200 rounded-xl text-red-700 text-xs font-medium animate-fadeIn">
             <div className="flex items-center gap-2">
-              <ShieldAlert className="w-4 h-4 text-red-600 shrink-0" />
+              <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
               <span>{errorBanner}</span>
             </div>
             <button onClick={() => setErrorBanner('')} className="underline text-red-800">Dismiss</button>
@@ -180,11 +170,16 @@ export const Dashboard = () => {
         )}
 
         {/* Dashboard Title & Actions */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-6 rounded-2xl border border-slate-200 shadow-sm">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 bg-white p-6 sm:p-8 rounded-2xl border border-slate-200 shadow-sm">
           <div>
-            <h1 className="text-2xl font-bold text-slate-900">Course Resource Management</h1>
-            <p className="text-xs text-slate-500 mt-1">
-              JWT-protected CRUD, Ownership Validation (<code className="text-indigo-600">authorId === req.user.id</code>), Optimistic UI, and Stripe Gateway.
+            <div className="text-xs font-semibold text-indigo-600 uppercase tracking-wider mb-1">
+              Course Catalog
+            </div>
+            <h1 className="text-2xl sm:text-3xl font-bold text-slate-900">
+              Welcome back, {user?.name?.split(' ')[0] || 'Learner'}
+            </h1>
+            <p className="text-xs sm:text-sm text-slate-500 mt-1">
+              Explore enterprise learning tracks, enroll in certified modules, or manage your published curricula.
             </p>
           </div>
 
@@ -194,22 +189,24 @@ export const Dashboard = () => {
                 setEditingCourse(null);
                 setIsModalOpen(true);
               }}
-              className="inline-flex items-center gap-2 px-4 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-lg text-xs font-semibold shadow-md shadow-indigo-600/20 transition-all"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl text-xs font-semibold shadow-md shadow-indigo-600/20 transition-all shrink-0"
             >
               <Plus className="w-4 h-4" />
-              <span>Create New Course</span>
+              <span>New Course</span>
             </button>
           )}
         </div>
 
         {/* Course Grid */}
         {loadingCourses ? (
-          <div className="py-12 text-center text-slate-500 text-xs">Loading course catalog...</div>
+          <div className="py-16 text-center text-slate-500 text-sm">Loading course catalog...</div>
         ) : courses.length === 0 ? (
-          <div className="py-16 text-center bg-white rounded-2xl border border-dashed border-slate-300 p-8 space-y-3">
-            <BookOpen className="w-10 h-10 text-slate-300 mx-auto" />
-            <h3 className="font-semibold text-slate-700 text-sm">No courses available yet</h3>
-            <p className="text-xs text-slate-400">Click "Create New Course" above to publish your first enterprise module.</p>
+          <div className="py-20 text-center bg-white rounded-2xl border border-dashed border-slate-300 p-8 space-y-3">
+            <BookOpen className="w-12 h-12 text-slate-300 mx-auto" />
+            <h3 className="font-semibold text-slate-700 text-base">No courses published yet</h3>
+            <p className="text-xs text-slate-500 max-w-sm mx-auto">
+              Get started by creating your first course syllabus or check back shortly for published modules.
+            </p>
           </div>
         ) : (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -223,71 +220,88 @@ export const Dashboard = () => {
               return (
                 <div
                   key={course._id}
-                  className="bg-white rounded-2xl border border-slate-200 p-6 flex flex-col justify-between shadow-sm hover:shadow-md transition-shadow relative overflow-hidden group"
+                  className="bg-white rounded-2xl border border-slate-200/90 p-6 flex flex-col justify-between shadow-xs hover:shadow-md transition-all hover:border-slate-300"
                 >
-                  <div className="space-y-3">
+                  <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <span className="px-2.5 py-1 bg-indigo-50 text-indigo-700 rounded-md text-[11px] font-semibold">
+                      <span className="px-3 py-1 bg-indigo-50 text-indigo-700 rounded-full text-xs font-medium">
                         {course.category}
                       </span>
-                      <span className="text-xs font-medium text-slate-400 capitalize">
+                      <span className="text-xs font-medium text-slate-500 capitalize">
                         {course.level}
                       </span>
                     </div>
 
-                    <h3 className="font-bold text-slate-900 text-base leading-snug line-clamp-1">
-                      {course.title}
-                    </h3>
+                    <div>
+                      <h3 className="font-bold text-slate-900 text-lg leading-snug line-clamp-1">
+                        {course.title}
+                      </h3>
+                      {course.summary ? (
+                        <p className="text-xs text-slate-600 mt-2 line-clamp-2 leading-relaxed">
+                          {course.summary}
+                        </p>
+                      ) : (
+                        <p className="text-xs text-slate-500 mt-2 line-clamp-2 leading-relaxed">
+                          {course.description}
+                        </p>
+                      )}
+                    </div>
 
-                    <p className="text-xs text-slate-500 line-clamp-2 leading-relaxed">
-                      {course.description}
-                    </p>
-
-                    <div className="pt-2 flex items-center justify-between border-t border-slate-100 text-xs">
-                      <div className="text-slate-500">
-                        Instructor: <span className="font-semibold text-slate-700">{course.instructor?.name || 'Faculty Member'}</span>
+                    {/* Semantic Keyword Tags */}
+                    {course.tags && course.tags.length > 0 && (
+                      <div className="flex flex-wrap gap-1.5 pt-1">
+                        {course.tags.slice(0, 3).map((tag, idx) => (
+                          <span
+                            key={idx}
+                            className="px-2 py-0.5 bg-slate-100 text-slate-600 rounded text-[11px] font-medium"
+                          >
+                            #{tag}
+                          </span>
+                        ))}
                       </div>
-                      <div className="font-extrabold text-slate-900 text-sm">
+                    )}
+
+                    <div className="pt-3 flex items-center justify-between border-t border-slate-100 text-xs">
+                      <div className="text-slate-500">
+                        By <span className="font-semibold text-slate-700">{course.instructor?.name || 'Faculty Member'}</span>
+                      </div>
+                      <div className="font-bold text-slate-900 text-base">
                         ${course.price?.toFixed(2)}
                       </div>
                     </div>
                   </div>
 
-                  {/* Actions Bar */}
-                  <div className="pt-5 mt-4 border-t border-slate-100 flex items-center justify-between gap-2">
-                    {/* Buyer Trigger: Stripe Checkout */}
+                  {/* Actions */}
+                  <div className="pt-5 mt-4 border-t border-slate-100 flex items-center justify-between gap-3">
                     <button
                       onClick={() => handleBuyCourse(course._id)}
                       disabled={checkoutLoading === course._id}
-                      className="flex-1 inline-flex items-center justify-center gap-1.5 py-2 px-3 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white rounded-lg text-xs font-semibold shadow-sm transition-all disabled:opacity-50"
+                      className="flex-1 inline-flex items-center justify-center gap-1.5 py-2.5 px-4 bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 text-white rounded-xl text-xs font-semibold shadow-xs transition-all disabled:opacity-50"
                     >
                       <CreditCard className="w-3.5 h-3.5" />
-                      <span>{checkoutLoading === course._id ? 'Connecting...' : 'Enroll with Stripe'}</span>
+                      <span>{checkoutLoading === course._id ? 'Connecting...' : 'Enroll Now'}</span>
                     </button>
 
-                    {/* Owner / Admin Management Buttons */}
-                    {isOwner ? (
+                    {isOwner && (
                       <div className="flex items-center gap-1">
                         <button
                           onClick={() => {
                             setEditingCourse(course);
                             setIsModalOpen(true);
                           }}
-                          className="p-2 text-slate-600 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
-                          title="Edit Course (Owner)"
+                          className="p-2 text-slate-500 hover:text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                          title="Edit Course"
                         >
                           <Edit className="w-4 h-4" />
                         </button>
                         <button
                           onClick={() => handleDeleteCourse(course._id, course.title)}
-                          className="p-2 text-slate-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
-                          title="Optimistic Delete (Owner)"
+                          className="p-2 text-slate-500 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                          title="Delete Course"
                         >
                           <Trash2 className="w-4 h-4" />
                         </button>
                       </div>
-                    ) : (
-                      <span className="text-[10px] text-slate-400 italic px-2">Read-Only</span>
                     )}
                   </div>
                 </div>

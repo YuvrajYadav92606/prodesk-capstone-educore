@@ -38,66 +38,63 @@ export const Login = () => {
 
   return (
     <div className="min-h-screen grid lg:grid-cols-2 bg-slate-50">
-      {/* Left Column: Enterprise Hero Branding (per Wireframe spec) */}
+      {/* Left Column: SaaS Branding Hero */}
       <div className="hidden lg:flex flex-col justify-between bg-slate-900 p-12 text-white relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-indigo-900/40 via-slate-900 to-indigo-950/80 z-0"></div>
         <div className="relative z-10">
           <div className="flex items-center gap-3">
-            <div className="p-2.5 bg-indigo-600 rounded-xl">
+            <div className="p-2.5 bg-indigo-600 rounded-xl shadow-lg shadow-indigo-600/30">
               <GraduationCap className="w-7 h-7 text-white" />
             </div>
             <span className="text-2xl font-bold tracking-tight">EduCore</span>
           </div>
-          <p className="mt-2 text-indigo-200 text-sm">Enterprise Learning Management Platform</p>
+          <p className="mt-2 text-indigo-200 text-sm">Enterprise Learning & Upskilling Cloud</p>
         </div>
 
         <div className="relative z-10 max-w-md">
           <blockquote className="space-y-4">
             <p className="text-xl font-medium leading-relaxed text-slate-100">
-              "EduCore provides the cryptographic security and enterprise pedagogy our workforce needs to achieve technology mastery."
+              "EduCore streamlined technical onboarding for over 4,000 engineers across our global organization in less than a quarter."
             </p>
             <footer className="text-sm text-slate-400">
               <div className="font-semibold text-white">Sarah Jenkins</div>
-              <div>Chief Technology Officer, GlobalFin</div>
+              <div>Head of Engineering Enablement, GlobalFin</div>
             </footer>
           </blockquote>
 
           <div className="mt-10 grid grid-cols-2 gap-4 border-t border-slate-800 pt-6">
             <div>
               <div className="text-2xl font-bold text-white">120K+</div>
-              <div className="text-xs text-slate-400">Active Students</div>
+              <div className="text-xs text-slate-400">Active Professionals</div>
             </div>
             <div>
-              <div className="text-2xl font-bold text-emerald-400">99.98%</div>
-              <div className="text-xs text-slate-400">Auth SLA Uptime</div>
+              <div className="text-2xl font-bold text-emerald-400">99.99%</div>
+              <div className="text-xs text-slate-400">Enterprise Service SLA</div>
             </div>
           </div>
         </div>
 
         <div className="relative z-10 text-xs text-slate-500">
-          (c) 2026 EduCore Technologies Inc. Walking Skeleton MVP.
+          © 2026 EduCore Technologies Inc. All rights reserved.
         </div>
       </div>
 
-      {/* Right Column: Authentication Card Form */}
+      {/* Right Column: Authentication Form */}
       <div className="flex items-center justify-center p-6 sm:p-12">
         <div className="w-full max-w-md space-y-8 bg-white p-8 sm:p-10 rounded-2xl shadow-xl shadow-slate-200/50 border border-slate-100">
           <div className="space-y-2">
-            <div className="inline-block px-3 py-1 bg-indigo-50 text-indigo-600 rounded-full text-xs font-semibold uppercase tracking-wider">
-              Walking Skeleton MVP
-            </div>
             <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-slate-900">
               Sign in to EduCore
             </h2>
             <p className="text-sm text-slate-500">
-              Enter your credentials to access your enterprise dashboard.
+              Enter your work email and password to access your courses.
             </p>
           </div>
 
           {wasExpired && (
             <div className="flex items-center gap-2 p-3 bg-amber-50 border border-amber-200 rounded-lg text-amber-800 text-xs">
               <AlertCircle className="w-4 h-4 shrink-0 text-amber-600" />
-              <span>Your session has expired. Please sign in again.</span>
+              <span>Your session has expired. Please sign in again to continue.</span>
             </div>
           )}
 
@@ -111,7 +108,7 @@ export const Login = () => {
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
               <label className="block text-xs font-semibold text-slate-700 uppercase tracking-wider mb-2">
-                Work Email Address
+                Work Email
               </label>
               <div className="relative">
                 <div className="absolute inset-y-0 left-0 pl-3.5 flex items-center pointer-events-none text-slate-400">
@@ -167,7 +164,7 @@ export const Login = () => {
               {isSubmitting ? (
                 <>
                   <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-                  <span>Verifying Credentials...</span>
+                  <span>Signing In...</span>
                 </>
               ) : (
                 'Sign In to EduCore'
