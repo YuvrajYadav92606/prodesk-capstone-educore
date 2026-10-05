@@ -130,22 +130,6 @@ graph TD
 git clone https://github.com/[YOUR-USERNAME]/prodesk-capstone-educore.git
 cd prodesk-capstone-educore
 ```
-
-Configure your server environment variables in `server/.env`:
-
-```env
-PORT=5000
-NODE_ENV=development
-JWT_SECRET=your_super_secret_jwt_key
-JWT_EXPIRES_IN=24h
-MONGO_URI=mongodb://localhost:27017/educore   # Optional: in-memory fallback if omitted
-STRIPE_SECRET_KEY=sk_test_your_stripe_key     # Optional: test mode enabled by default
-GEMINI_API_KEY=your_gemini_api_key           # Optional: fallback heuristics if omitted
-CLIENT_URL=http://localhost:5173
-```
-
----
-
 ### 2. Local Development
 
 #### Start Backend API
